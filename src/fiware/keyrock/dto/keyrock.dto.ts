@@ -1,9 +1,24 @@
 // DTOs define the structure of data
 // They're used for request validation and response formatting
+import { IsEmail, IsString, MinLength, IsOptional, IsBoolean, IsIn } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 
 export class LoginDto {
+  @ApiProperty({
+    example: 'alice-the-admin@test.com',
+    description: 'User email address',
+  })
+  @IsEmail({}, { message: 'Invalid email format' })
   email: string;
+
+  @ApiProperty({
+    example: 'test',
+    description: 'User password (minimum 3 characters)',
+    minLength: 3,
+  })
+  @IsString()
+  @MinLength(3, { message: 'Password must be at least 3 characters long' })
   password: string;
 }
 
@@ -13,18 +28,90 @@ export class TokenInfoDto {
 }
 
 export class CreateUserDto {
+  @ApiProperty({
+    example: 'john_doe',
+    description: 'Username (minimum 3 characters)',
+    minLength: 3,
+  })
+  @IsString()
+  @MinLength(3, { message: 'Username must be at least 3 characters long' })
   username: string;
+
+  @ApiProperty({
+    example: 'john@example.com',
+    description: 'User email address',
+  })
+  @IsEmail({}, { message: 'Invalid email format' })
   email: string;
+
+  @ApiProperty({
+    example: 'SecurePass123',
+    description: 'User password (minimum 6 characters)',
+    minLength: 6,
+  })
+  @IsString()
+  @MinLength(6, { message: 'Password must be at least 6 characters long' })
   password: string;
 }
 
 export class UpdateUserDto {
+  @ApiProperty({
+    example: 'john_doe_updated',
+    description: 'Updated username',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  @MinLength(3, { message: 'Username must be at least 3 characters long' })
   username?: string;
+
+  @ApiProperty({
+    example: 'newemail@example.com',
+    description: 'Updated email address',
+    required: false,
+  })
+  @IsOptional()
+  @IsEmail({}, { message: 'Invalid email format' })
   email?: string;
+
+  @ApiProperty({
+    example: true,
+    description: 'Whether the user account is enabled',
+    required: false,
+  })
+  @IsOptional()
+  @IsBoolean()
   enabled?: boolean;
+
+  @ApiProperty({
+    example: false,
+    description: 'Enable gravatar for user',
+    required: false,
+  })
+  @IsOptional()
+  @IsBoolean()
   gravatar?: boolean;
+
+  @IsOptional()
+  @IsString()
   date_password?: string;
+
+  @ApiProperty({
+    example: 'Software developer with 5 years experience',
+    description: 'User description/bio',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
   description?: string;
+
+  @ApiProperty({
+    example: 'https://example.com',
+    description: 'User website URL',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
   website?: string;
 }
 
@@ -79,6 +166,8 @@ export class TokenInfoResponseDto {
 }
 
 export class CreateRoleDto {
+  @IsString()
+  @MinLength(3, { message: 'Role name must be at least 3 characters long' })
   name: string;
 }
 
@@ -89,10 +178,47 @@ export class RoleDto {
 }
 
 export class CreatePermissionDto {
+  @ApiProperty({
+    example: 'Read Users',
+    description: 'Permission name (minimum 3 characters)',
+    minLength: 3,
+  })
+  @IsString()
+  @MinLength(3, { message: 'Permission name must be at least 3 characters long' })
   name: string;
+
+  @ApiProperty({
+    example: 'Allows reading user information',
+    description: 'Permission description',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
   description?: string;
+
+  @ApiProperty({
+    example: 'GET',
+    description: 'HTTP method',
+    enum: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  })
+  @IsIn(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], { message: 'Action must be one of: GET, POST, PUT, PATCH, DELETE' })
   action: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+  @ApiProperty({
+    example: '/api/users',
+    description: 'Resource path or pattern',
+  })
+  @IsString()
+  @MinLength(1, { message: 'Resource must not be empty' })
   resource: string;
+
+  @ApiProperty({
+    example: false,
+    description: 'Whether the resource is a regex pattern',
+    required: false,
+  })
+  @IsOptional()
+  @IsBoolean()
   is_regex?: boolean;
 }
 
