@@ -6,11 +6,15 @@ import { KeyrockAuthService } from './keyrock/services/auth.service';
 import { KeyrockUserService } from './keyrock/services/user.service';
 import { KeyrockRoleService } from './keyrock/services/role.service';
 import { KeyrockPermissionService } from './keyrock/services/permission.service';
+import { IoTAgentService } from './iot-agent/iot-agent.service';
+import { PepProxyService } from './pep-proxy/pep-proxy.service';
+import { SessionModule } from '../services/session.module';
 
 @Module({
   imports: [
     HttpModule,
     ConfigModule,
+    SessionModule,
   ],
   controllers: [],
   providers: [
@@ -19,6 +23,8 @@ import { KeyrockPermissionService } from './keyrock/services/permission.service'
     KeyrockUserService,
     KeyrockRoleService,
     KeyrockPermissionService,
+    IoTAgentService,
+    PepProxyService,
   ],
   exports: [
     KeyrockService,
@@ -26,6 +32,8 @@ import { KeyrockPermissionService } from './keyrock/services/permission.service'
     KeyrockUserService,
     KeyrockRoleService,
     KeyrockPermissionService,
+    IoTAgentService,
+    PepProxyService,
   ],
 })
 export class FiwareModule {}

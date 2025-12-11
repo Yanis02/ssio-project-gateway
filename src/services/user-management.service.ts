@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { KeyrockUserService } from '../fiware/keyrock/services/user.service';
 import { KeyrockRoleService } from '../fiware/keyrock/services/role.service';
 import { CreateUserDto, UpdateUserDto } from '../fiware/keyrock/dto/keyrock.dto';
+import { SessionService } from './session.service';
 
 @Injectable()
 export class UserManagementService {
@@ -11,6 +12,7 @@ export class UserManagementService {
   constructor(
     private readonly keyrockUserService: KeyrockUserService,
     private readonly keyrockRoleService: KeyrockRoleService,
+    private readonly sessionService: SessionService,
     private readonly configService: ConfigService,
   ) {
     this.appId = this.configService.get<string>('KEYROCK_APP_ID') || '';
@@ -19,31 +21,46 @@ export class UserManagementService {
     }
   }
 
-  async createUser(data: CreateUserDto, token: string) {
+  private getManagementToken(currentUserId: string): string {
+    const session = this.sessionService.getSession(currentUserId);
+    if (!session) {
+      throw new UnauthorizedException('Session not found');
+    }
+    return session.keyrockManagementToken;
+  }
+
+  async createUser(data: CreateUserDto, currentUserId: string) {
+    const token = this.getManagementToken(currentUserId);
     return this.keyrockUserService.createUser(data, token);
   }
 
-  async getUser(userId: string, token: string) {
+  async getUser(userId: string, currentUserId: string) {
+    const token = this.getManagementToken(currentUserId);
     return this.keyrockUserService.getUser(userId, token);
   }
 
-  async listUsers(token: string) {
+  async listUsers(currentUserId: string) {
+    const token = this.getManagementToken(currentUserId);
     return this.keyrockUserService.listUsers(token);
   }
 
-  async updateUser(userId: string, data: UpdateUserDto, token: string) {
+  async updateUser(userId: string, data: UpdateUserDto, currentUserId: string) {
+    const token = this.getManagementToken(currentUserId);
     return this.keyrockUserService.updateUser(userId, data, token);
   }
 
-  async deleteUser(userId: string, token: string) {
+  async deleteUser(userId: string, currentUserId: string) {
+    const token = this.getManagementToken(currentUserId);
     return this.keyrockUserService.deleteUser(userId, token);
   }
 
-  async getUserRoles(userId: string, token: string) {
+  async getUserRoles(userId: string, currentUserId: string) {
+    const token = this.getManagementToken(currentUserId);
     return this.keyrockRoleService.listUserRoles(this.appId, userId, token);
   }
 
-  async assignRoleToUser(userId: string, roleId: string, token: string) {
+  async assignRoleToUser(userId: string, roleId: string, currentUserId: string) {
+    const token = this.getManagementToken(currentUserId);
     return this.keyrockRoleService.assignRoleToUser(
       this.appId,
       { user_id: userId, role_id: roleId },
@@ -51,7 +68,8 @@ export class UserManagementService {
     );
   }
 
-  async removeRoleFromUser(userId: string, roleId: string, token: string) {
+  async removeRoleFromUser(userId: string, roleId: string, currentUserId: string) {
+    const token = this.getManagementToken(currentUserId);
     return this.keyrockRoleService.removeRoleFromUser(this.appId, userId, roleId, token);
   }
 }

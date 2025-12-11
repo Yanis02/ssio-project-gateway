@@ -29,9 +29,32 @@ export class UpdateUserDto {
 }
 
 
-export class LoginResponseDto {
+export class KeyrockTokenDto {
   access_token: string;
   expires_in: number;
+}
+
+export class LoginResponseDto {
+  accessToken: string;
+  expiresIn: number;
+  user: {
+    id: string;
+    username: string;
+    email: string;
+    roles: string[];
+  };
+}
+
+export class SessionDataDto {
+  userId: string;
+  username: string;
+  email: string;
+  roles: string[];
+  keyrockManagementToken: string;
+  oauth2AccessToken: string;
+  oauth2RefreshToken?: string;
+  keyrockTokenExpiry: Date;
+  oauth2TokenExpiry: Date;
 }
 
 

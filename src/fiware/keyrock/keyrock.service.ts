@@ -3,7 +3,7 @@ import { KeyrockAuthService } from './services/auth.service';
 import { KeyrockUserService } from './services/user.service';
 import { KeyrockRoleService } from './services/role.service';
 import { KeyrockPermissionService } from './services/permission.service';
-import { LoginDto, LoginResponseDto, TokenInfoDto, TokenInfoResponseDto, CreateUserDto, UpdateUserDto, UserDto, CreateRoleDto, RoleDto, CreatePermissionDto, PermissionDto, AssignRoleToUserDto, AssignPermissionToRoleDto } from './dto/keyrock.dto';
+import { LoginDto, KeyrockTokenDto, TokenInfoDto, TokenInfoResponseDto, CreateUserDto, UpdateUserDto, UserDto, CreateRoleDto, RoleDto, CreatePermissionDto, PermissionDto, AssignRoleToUserDto, AssignPermissionToRoleDto } from './dto/keyrock.dto';
 
 @Injectable()
 export class KeyrockService {
@@ -14,7 +14,7 @@ export class KeyrockService {
     private readonly permissionService: KeyrockPermissionService,
   ) {}
 
-  async getToken(loginDto: LoginDto): Promise<LoginResponseDto> {
+  async getToken(loginDto: LoginDto): Promise<KeyrockTokenDto> {
     return this.authService.getToken(loginDto);
   }
 
