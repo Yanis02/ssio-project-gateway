@@ -46,4 +46,27 @@ export class IoTService {
   async deleteDevice(deviceId: string): Promise<any> {
     return this.iotAgentService.deleteDevice(deviceId);
   }
+
+  /**
+   * Device Data Ingestion (South Port)
+   * @param accessToken - Optional OAuth2 access token for PEP Proxy authentication
+   */
+  async sendDeviceData(apiKey: string, deviceId: string, data: string, accessToken?: string): Promise<any> {
+    return this.iotAgentService.sendDeviceData(apiKey, deviceId, data, accessToken);
+  }
+
+  async sendDeviceDataJson(apiKey: string, deviceId: string, data: Record<string, any>, accessToken?: string): Promise<any> {
+    return this.iotAgentService.sendDeviceDataJson(apiKey, deviceId, data, accessToken);
+  }
+
+  /**
+   * South Port Configuration Info
+   */
+  isSouthProxyConfigured(): boolean {
+    return this.iotAgentService.isSouthProxyConfigured();
+  }
+
+  getSouthPortUrl(): string {
+    return this.iotAgentService.getSouthPortUrlInfo();
+  }
 }

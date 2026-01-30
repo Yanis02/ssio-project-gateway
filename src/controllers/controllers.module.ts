@@ -5,6 +5,7 @@ import { RolesController, PermissionsController } from './access-control/access-
 import { OrionController } from './orion/orion.controller';
 import { ServiceGroupsController } from './iot/service-groups.controller';
 import { DevicesController } from './iot/devices.controller';
+import { DeviceDataController } from './iot/device-data.controller';
 import { ServicesModule } from '../services/services.module';
 
 @Module({
@@ -17,6 +18,7 @@ import { ServicesModule } from '../services/services.module';
     OrionController,
     ServiceGroupsController,
     DevicesController,
+    DeviceDataController,
   ],
 })
 export class ControllersModule {}
