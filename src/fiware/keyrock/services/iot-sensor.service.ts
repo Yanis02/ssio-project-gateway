@@ -53,11 +53,44 @@ export class KeyrockIoTSensorService {
           },
         ),
       );
-      return response.data;
+      
+      console.log('Keyrock createIoTSensor response:', JSON.stringify(response.data, null, 2));
+      
+      // Handle different response structures from Keyrock
+      const data = response.data;
+      
+      // If response has 'iot' wrapper
+      if (data?.iot?.id) {
+        return data;
+      }
+      
+      // If response has 'iot_agent' wrapper (some Keyrock versions)
+      if (data?.iot_agent?.id) {
+        return { iot: data.iot_agent };
+      }
+      
+      // If response is flat (id and password directly)
+      if (data?.id && data?.password) {
+        return { iot: data };
+      }
+      
+      // If response has 'pep_proxy' format (Keyrock might use similar structure)
+      if (data?.pep_proxy?.id) {
+        return { iot: data.pep_proxy };
+      }
+      
+      throw new HttpException(
+        `Unexpected Keyrock response format: ${JSON.stringify(data)}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       if (error.response) {
+        console.error('Keyrock createIoTSensor error:', error.response.data);
         throw new HttpException(
-          error.response.data?.error || 'Failed to create IoT sensor',
+          error.response.data?.error || error.response.data?.message || 'Failed to create IoT sensor',
           error.response.status,
         );
       }

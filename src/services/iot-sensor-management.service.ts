@@ -43,9 +43,17 @@ export class IoTSensorManagementService {
     const token = this.getManagementToken(currentUserId);
     const result = await this.keyrockIoTSensorService.createIoTSensor(this.appId, token);
     
+    const sensorId = result?.iot?.id;
+    const password = result?.iot?.password;
+    
+    if (!sensorId || !password) {
+      console.error('Invalid IoT sensor creation response:', result);
+      throw new Error('Failed to create IoT sensor: invalid response from Keyrock');
+    }
+    
     return {
-      sensorId: result.iot.id,
-      password: result.iot.password,
+      sensorId,
+      password,
       message: 'IMPORTANT: Save these credentials! The password cannot be retrieved again.',
     };
   }
