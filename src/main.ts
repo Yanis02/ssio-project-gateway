@@ -2,10 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { LogsService } from './services/logs.service';
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   // Enable validation globally
   app.useGlobalPipes(
     new ValidationPipe({
@@ -17,6 +19,10 @@ async function bootstrap() {
       },
     }),
   );
+
+  // Register global logging interceptor (uses DI to get the shared LogsService)
+  const logsService = app.get(LogsService);
+  app.useGlobalInterceptors(new LoggingInterceptor(logsService));
 
   // Setup Swagger documentation
   const config = new DocumentBuilder()
@@ -47,6 +53,7 @@ async function bootstrap() {
     .addTag('IoT Devices', 'IoT device provisioning and management')
     .addTag('IoT Service Groups', 'IoT service group configuration')
     .addTag('Orion Context Broker', 'Entity data management through PEP Proxy')
+    .addTag('Logs', 'Real-time activity log stream (admin only)')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -55,9 +62,10 @@ async function bootstrap() {
     customfavIcon: 'https://nestjs.com/img/logo-small.svg',
     customCss: '.swagger-ui .topbar { display: none }',
   });
-  
+
   await app.listen(process.env.PORT ?? 3000);
   console.log(`\n🚀 Application is running on: http://localhost:${process.env.PORT ?? 3000}`);
   console.log(`📚 Swagger documentation available at: http://localhost:${process.env.PORT ?? 3000}/api/docs\n`);
 }
 bootstrap();
+

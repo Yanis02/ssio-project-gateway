@@ -9,6 +9,7 @@ import { AccessControlService } from './access-control.service';
 import { IoTService } from './iot.service';
 import { IoTSensorManagementService } from './iot-sensor-management.service';
 import { OrionService } from './orion.service';
+import { LogsService } from './logs.service';
 import { SessionModule } from './session.module';
 import { JwtStrategy } from '../strategies/jwt.strategy';
 import { FiwareModule } from '../fiware/fiware.module';
@@ -39,6 +40,7 @@ import { FiwareModule } from '../fiware/fiware.module';
     IoTService,
     IoTSensorManagementService,
     OrionService,
+    LogsService,
     JwtStrategy,
   ],
   exports: [
@@ -48,8 +50,9 @@ import { FiwareModule } from '../fiware/fiware.module';
     IoTService,
     IoTSensorManagementService,
     OrionService,
+    LogsService,
     SessionModule,
     FiwareModule,
   ],
 })
-export class ServicesModule {}
+export class ServicesModule { }
